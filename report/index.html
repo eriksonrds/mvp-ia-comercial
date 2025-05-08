@@ -1,0 +1,191 @@
+
+    <!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <title>Dashboard de Inteligência Comercial</title>
+        <link rel="stylesheet" href="assets/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <header class="header">
+                <h1>Dashboard de Inteligência Comercial</h1>
+                <p><strong>Data de geração:</strong> 07/05/2025 15:47</p>
+                <p>Este relatório apresenta a análise automatizada de clusters de interações comerciais, identificando temas centrais, motivos reais de compra e insights estratégicos.</p>
+            </header>
+
+            <section>
+                <h2>🔹 Visualização TSNE + Status (KMeans)</h2>
+                
+        <div class="row">
+            <div class="card">
+                <h4>TSNE com temas por KMeans</h4>
+                <img src="assets/tsne_kmeans_com_tema.png" alt="TSNE com temas por KMeans">
+            </div>
+            <div class="card">
+                <h4>Status por cluster (KMeans)</h4>
+                <img src="assets/status_por_cluster_kmeans.png" alt="Status por cluster (KMeans)">
+            </div>
+        </div>
+        
+                <table border="1" class="dataframe tabela">
+  <thead>
+    <tr style="text-align: right;">
+      <th>tema_detectado</th>
+      <th>motivo_real</th>
+      <th>insight_estrategico</th>
+      <th>exemplos_representativos</th>
+      <th>cluster</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Processo de vendas</td>
+      <td>As empresas estão interessadas em fechar negócios, com destaque para a KappaSoft que aparece mais vezes nas interações.</td>
+      <td>Focar esforços de vendas na KappaSoft, pois parece haver um interesse significativo deles em nossos produtos/serviços. Além disso, é importante manter um bom relacionamento com as outras empresas e buscar novas oportunidades de negócios.</td>
+      <td>['Proposta para KappaSoft | Descrição: nan | Status: closedwon | Canal: nan', 'Contrato enviado para KappaSoft | Descrição: nan | Status: contractsent | Canal: nan']</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Processo de Vendas</td>
+      <td>As empresas estão no processo de negociação e fechamento de contratos, indicando interesse em comprar ou considerar a compra devido à necessidade de serviços ou produtos oferecidos.</td>
+      <td>A equipe de vendas deve focar em acompanhar de perto esses contratos enviados e agendar apresentações para garantir que as negociações sejam concluídas com sucesso. Além disso, o marketing pode criar materiais de apoio para ajudar a destacar os benefícios e diferenciais dos produtos/serviços oferecidos.</td>
+      <td>['Empresa: Contrato enviado para OmegaIndustries | Descrição: nan | Status: contractsent | Canal: nan', 'Empresa: Negociação com OmegaIndustries | Descrição: nan | Status: closedwon | Canal: nan']</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>Processo de vendas para EpsilonData</td>
+      <td>A EpsilonData mostrou interesse em comprar, passou por várias etapas do processo de vendas, incluindo qualificação, apresentação, decisão do tomador de decisão e envio de contrato.</td>
+      <td>A EpsilonData parece ser um cliente potencialmente valioso, com várias interações de vendas bem-sucedidas. No entanto, também houve uma venda perdida, o que sugere que pode haver espaço para melhorar a abordagem de vendas ou o produto oferecido. Recomenda-se uma revisão detalhada do processo de vendas para identificar possíveis áreas de melhoria.</td>
+      <td>['Empresa: Proposta para EpsilonData | Descrição: nan | Status: qualifiedtobuy | Canal: nan', 'Empresa: Contrato enviado para EpsilonData | Descrição: nan | Status: decisionmakerboughtin | Canal: nan']</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>Processo de vendas</td>
+      <td>A falta de informações detalhadas na descrição dificulta a identificação de um motivo específico para a compra. No entanto, o fato de que as empresas entraram em contato e avançaram no processo de vendas sugere um interesse inicial nos produtos ou serviços oferecidos.</td>
+      <td>É crucial coletar e registrar mais informações durante o processo de vendas para entender melhor as motivações dos clientes. Isso pode ser feito através de questionários, entrevistas ou simplesmente incentivando a equipe de vendas a registrar observações detalhadas. Além disso, a empresa deve continuar a se envolver proativamente com potenciais clientes, já que isso parece estar gerando algum sucesso.</td>
+      <td>['Empresa: Contato iniciado com ZetaCloud | Descrição: nan | Status: closedwon | Canal: nan', 'Empresa: Contato iniciado com LambdaSystems | Descrição: nan | Status: decisionmakerboughtin | Canal: nan']</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>Processo de vendas para a empresa BetaLog</td>
+      <td>A empresa BetaLog está considerando a compra devido ao início do contato e às propostas enviadas, mas também houve perdas no processo de venda.</td>
+      <td>Revisar as propostas e contratos enviados para a BetaLog para entender as razões das perdas e melhorar a abordagem de vendas. Além disso, manter um acompanhamento constante após o envio de propostas e contratos pode ajudar a garantir que a venda seja concluída.</td>
+      <td>['Empresa: Proposta para BetaLog | Descrição: nan | Status: closedwon | Canal: nan', 'Empresa: Contrato enviado para BetaLog | Descrição: nan | Status: closedlost | Canal: nan']</td>
+      <td>4</td>
+    </tr>
+  </tbody>
+</table>
+            </section>
+
+            <section>
+                <h2>🔹 Visualização TSNE + Status (HDBSCAN)</h2>
+                
+        <div class="row">
+            <div class="card">
+                <h4>TSNE com temas por HDBSCAN</h4>
+                <img src="assets/tsne_hdbscan_com_tema.png" alt="TSNE com temas por HDBSCAN">
+            </div>
+            <div class="card">
+                <h4>Status por cluster (HDBSCAN)</h4>
+                <img src="assets/status_por_cluster_hdbscan.png" alt="Status por cluster (HDBSCAN)">
+            </div>
+        </div>
+        
+                <table border="1" class="dataframe tabela">
+  <thead>
+    <tr style="text-align: right;">
+      <th>tema_detectado</th>
+      <th>motivo_real</th>
+      <th>insight_estrategico</th>
+      <th>exemplos_representativos</th>
+      <th>cluster</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Contato com a empresa ZetaCloud</td>
+      <td>A falta de descrição e canal não permite uma análise precisa do motivo real da compra. No entanto, o status indica que os clientes estão em diferentes estágios do processo de compra, desde a qualificação para compra até a conclusão da venda.</td>
+      <td>É necessário coletar mais informações durante o processo de venda para entender melhor as motivações do cliente. Isso pode incluir detalhes sobre o que levou o cliente a iniciar o contato e quais recursos ou serviços eles estão interessados. Além disso, identificar o canal de vendas pode ajudar a otimizar estratégias de marketing e vendas.</td>
+      <td>['Empresa: Contato iniciado com ZetaCloud | Descrição: nan | Status: closedwon | Canal: nan', 'Empresa: Contato iniciado com ZetaCloud | Descrição: nan | Status: qualifiedtobuy | Canal: nan']</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Negociação e envio de contrato para DeltaExpress</td>
+      <td>A DeltaExpress está considerando a compra devido ao envio de propostas e contratos, indicando um interesse em estabelecer uma parceria comercial.</td>
+      <td>A equipe de vendas deve fazer um acompanhamento consistente com a DeltaExpress para garantir que todas as suas dúvidas sejam esclarecidas e para facilitar o processo de tomada de decisão. O marketing pode criar materiais de apoio para destacar os benefícios e diferenciais de nossos serviços.</td>
+      <td>['Negociação com DeltaExpress', 'Contrato enviado para DeltaExpress']</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>Processo de vendas para a empresa LambdaSystems</td>
+      <td>A empresa LambdaSystems está interessada nos serviços/produtos oferecidos e passou por todas as etapas do processo de vendas, desde a programação de uma apresentação até a compra efetiva.</td>
+      <td>A equipe de vendas deve continuar com a abordagem utilizada para a LambdaSystems, pois parece ser eficaz. Além disso, o time de marketing pode usar esse caso de sucesso em materiais promocionais para atrair empresas semelhantes.</td>
+      <td>['Empresa: Reunião com LambdaSystems | Descrição: nan | Status: presentationscheduled | Canal: nan', 'Empresa: Contato iniciado com LambdaSystems | Descrição: nan | Status: closedwon | Canal: nan']</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>Processo de vendas para a empresa BetaLog</td>
+      <td>A empresa BetaLog está considerando a compra devido ao início do contato e envio de propostas e contratos.</td>
+      <td>A equipe de vendas deve focar em melhorar a comunicação e a clareza das propostas e contratos enviados para aumentar a taxa de sucesso. Além disso, o acompanhamento após o envio do contrato pode ajudar a esclarecer quaisquer dúvidas e aumentar a chance de fechar o negócio.</td>
+      <td>['Empresa: Proposta para BetaLog | Descrição: nan | Status: contractsent | Canal: nan', 'Empresa: Contrato enviado para BetaLog | Descrição: nan | Status: decisionmakerboughtin | Canal: nan']</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>Processo de Vendas para KappaSoft</td>
+      <td>A KappaSoft estava em busca de uma solução que a Logcomex poderia fornecer, levando a várias interações e finalmente a uma venda bem-sucedida.</td>
+      <td>Manter um acompanhamento constante e eficaz durante todo o processo de vendas pode levar a resultados positivos. Além disso, é importante garantir que todas as informações necessárias sejam fornecidas ao cliente em cada etapa do processo.</td>
+      <td>['Empresa: Proposta para KappaSoft | Descrição: nan | Status: closedwon | Canal: nan', 'Empresa: Reunião com KappaSoft | Descrição: nan | Status: closedwon | Canal: nan']</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>Processo de venda para a empresa GammaTrade</td>
+      <td>A GammaTrade está considerando a compra devido ao interesse em nossos produtos ou serviços, conforme indicado pelas várias etapas de negociação, reunião e envio de contrato.</td>
+      <td>A equipe de vendas deve continuar a se engajar com a GammaTrade, mas também deve analisar as razões para as vendas perdidas. A equipe de marketing pode criar materiais específicos para abordar as preocupações ou perguntas da GammaTrade. O produto pode considerar o feedback da GammaTrade para melhorias futuras.</td>
+      <td>['Empresa: Contrato enviado para GammaTrade | Descrição: nan | Status: qualifiedtobuy | Canal: nan', 'Empresa: Negociação com GammaTrade | Descrição: nan | Status: presentationscheduled | Canal: nan']</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td>Processo de Vendas para AlphaTech</td>
+      <td>A AlphaTech parece ter sido convencida pela apresentação de vendas e decidiu comprar o produto/serviço.</td>
+      <td>A equipe de vendas deve continuar com a abordagem atual, pois parece ser eficaz. Além disso, o processo de vendas pode ser otimizado para garantir que todas as etapas sejam concluídas de maneira eficiente e eficaz.</td>
+      <td>['Empresa: Contato iniciado com AlphaTech | Descrição: nan | Status: decisionmakerboughtin | Canal: nan', 'Empresa: Reunião com AlphaTech | Descrição: nan | Status: closedwon | Canal: nan']</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>Processo de venda para OmegaIndustries</td>
+      <td>A OmegaIndustries mostrou interesse nos produtos/serviços oferecidos e passou por todas as etapas do processo de venda, desde a programação de uma apresentação até o fechamento do negócio.</td>
+      <td>A equipe de vendas deve continuar a fornecer um atendimento de qualidade e manter um bom relacionamento com a OmegaIndustries para garantir futuras vendas. Além disso, o marketing pode usar este caso de sucesso em estudos de caso ou depoimentos para atrair novos clientes.</td>
+      <td>['Empresa: Negociação com OmegaIndustries | Descrição: nan | Status: presentationscheduled | Canal: nan', 'Empresa: Negociação com OmegaIndustries | Descrição: nan | Status: closedwon | Canal: nan']</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>Proposta de venda para EpsilonData</td>
+      <td>A empresa EpsilonData foi qualificada para compra, mas também há registros de negócios perdidos e ganhos, indicando um interesse variável nos produtos ou serviços oferecidos.</td>
+      <td>A equipe de vendas deve analisar os motivos pelos quais alguns negócios foram perdidos e outros ganhos para entender melhor as necessidades da EpsilonData e personalizar futuras propostas. Além disso, o marketing pode trabalhar em campanhas direcionadas para destacar os benefícios dos produtos ou serviços que foram bem-sucedidos na conversão de vendas.</td>
+      <td>['Empresa: Proposta para EpsilonData | Descrição: nan | Status: closedlost | Canal: nan', 'Empresa: Proposta para EpsilonData | Descrição: nan | Status: closedwon | Canal: nan']</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>Processo de venda para a empresa EpsilonData</td>
+      <td>A EpsilonData está considerando a compra devido ao interesse demonstrado nas apresentações e a decisão do tomador de decisões em prosseguir com a compra.</td>
+      <td>Acompanhar de perto a EpsilonData durante o processo de fechamento do contrato, garantindo que todas as suas perguntas sejam respondidas e que eles estejam satisfeitos com os termos do contrato. Além disso, identificar e aplicar a mesma estratégia para empresas semelhantes pode aumentar as vendas.</td>
+      <td>['Empresa: Contrato enviado para EpsilonData | Descrição: nan | Status: presentationscheduled | Canal: nan', 'Empresa: Contrato enviado para EpsilonData | Descrição: nan | Status: decisionmakerboughtin | Canal: nan']</td>
+      <td>9</td>
+    </tr>
+  </tbody>
+</table>
+            </section>
+        </div>
+
+        <script>
+            function ajustarAltura() {
+                const altura = document.body.scrollHeight;
+                window.parent.postMessage({ tipo: "ajustarAltura", altura: altura }, "*");
+            }
+            window.onload = ajustarAltura;
+            window.onresize = ajustarAltura;
+        </script>
+    </body>
+    </html>
+    
