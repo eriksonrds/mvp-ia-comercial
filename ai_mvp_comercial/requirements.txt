@@ -1,0 +1,11 @@
+openai
+python-dotenv
+pandas
+numpy
+scikit-learn
+hdbscan
+matplotlib
+seaborn
+tqdm
+requests
+flask
