@@ -1,0 +1,45 @@
+# Virtualenv
+venv/
+ENV/
+env/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Arquivos Python compilados
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Arquivos de log
+*.log
+
+# Dados sensíveis ou de configuração local
+.env
+*.env
+
+# Arquivos temporários
+*.bak
+*.tmp
+*.swp
+*~
+
+# Dados gerados automaticamente
+outputs/
+report/
+data/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
