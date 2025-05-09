@@ -13,13 +13,12 @@ load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
 # Instância segura do cliente OpenAI (sem verificação de certificado para dev)
-client = OpenAI(
-    api_key=api_key,
-    http_client=httpx.Client(verify=False)
-)
+client = OpenAI(api_key=api_key, http_client=httpx.Client(verify=False))
 
 
-def gerar_resumo_cluster(df: pd.DataFrame, cluster_col: str, output_filename: str) -> None:
+def gerar_resumo_cluster(
+    df: pd.DataFrame, cluster_col: str, output_filename: str
+) -> None:
     """
     Gera um resumo estratégico por cluster a partir de interações agrupadas.
 
@@ -39,32 +38,34 @@ def gerar_resumo_cluster(df: pd.DataFrame, cluster_col: str, output_filename: st
         exemplos = subset.head(10)
 
         interacoes_texto = "\n".join(
-            f"- Empresa: {row.get('empresa', '')} | Descrição: {row.get('frase_interacao', '')} | "
-            f"Status: {row.get('status', '')} | Canal: {row.get('canal', '')}"
+            f"- Empresa: {row.get('empresa', '')} | "
+            f"Descrição: {row.get('frase_interacao', '')} | "
+            f"Status: {row.get('status', '')} | "
+            f"Canal: {row.get('canal', '')}"
             for _, row in exemplos.iterrows()
         )
 
-        prompt = f"""
-        Você é um especialista em inteligência de mercado da Logcomex. Receberá registros reais de negócios agrupados por similaridade semântica.
-
-        Com base nas interações abaixo, gere uma análise estruturada contendo:
-        - "tema_detectado": qual é o assunto predominante nesse grupo.
-        - "motivo_real": o que levou esses clientes a comprar ou considerar a compra.
-        - "insight_estrategico": uma recomendação prática para vendas, marketing ou produto.
-        - "exemplos_representativos": selecione 2 frases do grupo que representem bem o motivo.
-
-        Responda apenas em formato JSON com as seguintes chaves:
-        ["tema_detectado", "motivo_real", "insight_estrategico", "exemplos_representativos"]
-
-        Interações:
-        {interacoes_texto}
-        """
+        prompt = (
+            "Você é um especialista em inteligência de mercado da Logcomex. "
+            "Receberá registros reais de negócios agrupados por similaridade semântica.\n\n"
+            "Com base nas interações abaixo, gere uma análise estruturada contendo:\n"
+            '- "tema_detectado": qual é o assunto predominante nesse grupo.\n'
+            '- "motivo_real": o que levou esses clientes a comprar ou considerar a compra.\n'
+            '- "insight_estrategico": uma recomendação prática para vendas, marketing ou produto.\n'
+            '- "exemplos_representativos": selecione 2 frases do grupo que representem bem o motivo.\n\n'
+            "Responda apenas em formato JSON com as seguintes chaves:\n"
+            '["tema_detectado", "motivo_real", "insight_estrategico", "exemplos_representativos"]\n\n'
+            f"Interações:\n{interacoes_texto}"
+        )
 
         try:
             resposta = client.chat.completions.create(
                 model="gpt-4",
                 messages=[
-                    {"role": "system", "content": "Você é um analista de vendas estratégico."},
+                    {
+                        "role": "system",
+                        "content": "Você é um analista de vendas estratégico.",
+                    },
                     {"role": "user", "content": prompt.strip()},
                 ],
                 temperature=0.2,
@@ -75,7 +76,10 @@ def gerar_resumo_cluster(df: pd.DataFrame, cluster_col: str, output_filename: st
             try:
                 resposta_json = json.loads(resposta_texto)
             except json.JSONDecodeError:
-                print(f"⚠️ Resposta inválida no cluster {cluster_id}. Salvando como texto bruto.")
+                print(
+                    f"⚠️ Resposta inválida no cluster {cluster_id}. "
+                    "Salvando como texto bruto."
+                )
                 resposta_json = {
                     "tema_detectado": "Erro de parsing",
                     "motivo_real": resposta_texto,
@@ -83,7 +87,7 @@ def gerar_resumo_cluster(df: pd.DataFrame, cluster_col: str, output_filename: st
                     "exemplos_representativos": [],
                 }
 
-        except Exception as e:
+        except Exception:
             print(f"\n❌ Erro ao gerar resumo para o cluster {cluster_id}")
             traceback.print_exc()
             resposta_json = {

@@ -6,7 +6,7 @@ from app.config.paths import DATA_DIR, REPORT_DIR
 
 def plotar_status_por_cluster(
     df_path: str = DATA_DIR / "interacoes_clusterizadas.csv",
-    output_dir: str = REPORT_DIR / "assets"
+    output_dir: str = REPORT_DIR / "assets",
 ) -> None:
     """
     Gera gráficos de barras com a distribuição dos status dos negócios por cluster.
@@ -20,14 +20,11 @@ def plotar_status_por_cluster(
 
     def gerar_plot(cluster_col: str, filename: str, titulo: str):
         plt.figure(figsize=(12, 8))
-        agrupado = df.groupby([cluster_col, "status"]).size().reset_index(name="quantidade")
-
-        sns.barplot(
-            data=agrupado,
-            x=cluster_col,
-            y="quantidade",
-            hue="status"
+        agrupado = (
+            df.groupby([cluster_col, "status"]).size().reset_index(name="quantidade")
         )
+
+        sns.barplot(data=agrupado, x=cluster_col, y="quantidade", hue="status")
 
         plt.title(titulo)
         plt.xlabel("Cluster")
@@ -44,8 +41,16 @@ def plotar_status_por_cluster(
         plt.close()
 
     print("📊 Gerando gráfico de status por cluster...")
-    gerar_plot("cluster_kmeans", "status_por_cluster_kmeans.png", "Distribuição de status por cluster (KMeans)")
-    gerar_plot("cluster_hdbscan", "status_por_cluster_hdbscan.png", "Distribuição de status por cluster (HDBSCAN)")
+    gerar_plot(
+        "cluster_kmeans",
+        "status_por_cluster_kmeans.png",
+        "Distribuição de status por cluster (KMeans)",
+    )
+    gerar_plot(
+        "cluster_hdbscan",
+        "status_por_cluster_hdbscan.png",
+        "Distribuição de status por cluster (HDBSCAN)",
+    )
 
     print("✅ Gráficos salvos em:")
     print(f"   → {output_dir / 'status_por_cluster_kmeans.png'}")

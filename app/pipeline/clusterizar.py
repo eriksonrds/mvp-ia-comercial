@@ -3,6 +3,7 @@ from sklearn.cluster import KMeans
 import hdbscan
 from app.config.paths import DATA_DIR
 
+
 def aplicar_clustering(
     input_path=DATA_DIR / "interacoes_com_embeddings.csv",
     output_path=DATA_DIR / "interacoes_clusterizadas.csv",
@@ -32,7 +33,9 @@ def aplicar_clustering(
     df["cluster_hdbscan"] = hdb.fit_predict(X)
 
     n_outliers = (df["cluster_hdbscan"] == -1).sum()
-    n_clusters = df["cluster_hdbscan"].nunique() - (1 if -1 in df["cluster_hdbscan"].unique() else 0)
+    n_clusters = df["cluster_hdbscan"].nunique() - (
+        1 if -1 in df["cluster_hdbscan"].unique() else 0
+    )
 
     print(f"✅ HDBSCAN gerou {n_clusters} clusters válidos e {n_outliers} outliers.")
 

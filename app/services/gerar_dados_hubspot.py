@@ -1,6 +1,5 @@
 import pandas as pd
 import requests
-from datetime import datetime
 from dotenv import load_dotenv
 import os
 
@@ -31,7 +30,9 @@ PROPERTIES = [
 ]
 
 
-def extrair_dados_hubspot(salvar_em=DATA_DIR / "interacoes_hubspot.csv", limite=100) -> None:
+def extrair_dados_hubspot(
+    salvar_em=DATA_DIR / "interacoes_hubspot.csv", limite=100
+) -> None:
     """
     Extrai dados da API do HubSpot e salva em CSV para posterior análise.
 
@@ -57,18 +58,26 @@ def extrair_dados_hubspot(salvar_em=DATA_DIR / "interacoes_hubspot.csv", limite=
 
     for r in resultados:
         prop = r.get("properties", {})
-        dados.append({
-            "deal_id": r.get("id"),
-            "empresa": prop.get("dealname", ""),
-            "status": prop.get("dealstage", ""),
-            "pipeline": prop.get("pipeline", ""),
-            "frase_interacao": prop.get("description", ""),
-            "responsavel": prop.get("hubspot_owner_id", ""),
-            "canal": prop.get("hs_source", ""),
-            "data_criacao": prop.get("createdate", "")[:10],
-            "data_fechamento": prop.get("closedate", "")[:10] if prop.get("closedate") else "",
-            "ultima_interacao": prop.get("hs_lastmodifieddate", "")[:10] if prop.get("hs_lastmodifieddate") else "",
-        })
+        dados.append(
+            {
+                "deal_id": r.get("id"),
+                "empresa": prop.get("dealname", ""),
+                "status": prop.get("dealstage", ""),
+                "pipeline": prop.get("pipeline", ""),
+                "frase_interacao": prop.get("description", ""),
+                "responsavel": prop.get("hubspot_owner_id", ""),
+                "canal": prop.get("hs_source", ""),
+                "data_criacao": prop.get("createdate", "")[:10],
+                "data_fechamento": (
+                    prop.get("closedate", "")[:10] if prop.get("closedate") else ""
+                ),
+                "ultima_interacao": (
+                    prop.get("hs_lastmodifieddate", "")[:10]
+                    if prop.get("hs_lastmodifieddate")
+                    else ""
+                ),
+            }
+        )
 
     df = pd.DataFrame(dados)
     salvar_em.parent.mkdir(parents=True, exist_ok=True)

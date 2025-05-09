@@ -1,8 +1,7 @@
 from datetime import datetime
-from pathlib import Path
 import pandas as pd
 
-from app.config.paths import REPORT_DIR, OUTPUTS_DIR, REPORT_DIR
+from app.config.paths import REPORT_DIR, OUTPUTS_DIR
 
 
 def gerar_dashboard_html() -> None:
@@ -16,11 +15,15 @@ def gerar_dashboard_html() -> None:
     assets_path = "assets"
     html_path = REPORT_DIR / "index.html"
 
-    analise_kmeans = pd.read_csv(OUTPUTS_DIR / "analise_kmeans.csv").to_html(index=False, classes="tabela")
-    analise_hdbscan = pd.read_csv(OUTPUTS_DIR / "analise_hdbscan.csv").to_html(index=False, classes="tabela")
+    analise_kmeans = pd.read_csv(OUTPUTS_DIR / "analise_kmeans.csv").to_html(
+        index=False, classes="tabela"
+    )
+    analise_hdbscan = pd.read_csv(OUTPUTS_DIR / "analise_hdbscan.csv").to_html(
+        index=False, classes="tabela"
+    )
 
     def imagem_dupla(img1, img2, legenda1, legenda2):
-        return f'''
+        return f"""
         <div class="row">
             <div class="card">
                 <h4>{legenda1}</h4>
@@ -31,9 +34,9 @@ def gerar_dashboard_html() -> None:
                 <img src="{assets_path}/{img2}" alt="{legenda2}">
             </div>
         </div>
-        '''
+        """
 
-    html = f'''
+    html = f"""
     <!DOCTYPE html>
     <html lang="pt-br">
     <head>
@@ -72,7 +75,7 @@ def gerar_dashboard_html() -> None:
         </script>
     </body>
     </html>
-    '''
+    """
 
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)

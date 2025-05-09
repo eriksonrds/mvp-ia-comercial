@@ -13,15 +13,12 @@ load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
 # Cria cliente ignorando SSL (ambiente local/teste)
-client = OpenAI(
-    api_key=api_key,
-    http_client=httpx.Client(verify=False)
-)
+client = OpenAI(api_key=api_key, http_client=httpx.Client(verify=False))
 
 
 def gerar_embeddings_csv(
     input_path=DATA_DIR / "interacoes_hubspot.csv",
-    output_path=DATA_DIR / "interacoes_com_embeddings.csv"
+    output_path=DATA_DIR / "interacoes_com_embeddings.csv",
 ) -> None:
     """
     Gera embeddings com base no contexto de interações comerciais e salva em CSV.
@@ -52,8 +49,7 @@ def gerar_embeddings_csv(
         for tentativa in range(3):
             try:
                 response = client.embeddings.create(
-                    model="text-embedding-3-small",
-                    input=contexto.strip()
+                    model="text-embedding-3-small", input=contexto.strip()
                 )
                 embedding = response.data[0].embedding
                 sucesso = True
@@ -63,11 +59,13 @@ def gerar_embeddings_csv(
                 print(f"→ Tipo de erro: {type(e).__name__}")
                 print(f"→ Mensagem: {str(e)}")
                 traceback.print_exc()
-                sleep(2 ** tentativa)
+                sleep(2**tentativa)
 
         if not sucesso:
             embedding = [0.0] * 1536
-            print(f"❌ Falha definitiva ao gerar embedding para linha {i} — usando vetor nulo.")
+            print(
+                f"❌ Falha definitiva ao gerar embedding para linha {i} — usando vetor nulo."
+            )
 
         embeddings.append(embedding)
 

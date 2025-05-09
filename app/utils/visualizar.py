@@ -9,7 +9,7 @@ from app.config.paths import DATA_DIR, OUTPUTS_DIR, REPORT_DIR
 
 def visualizar_tsne(
     input_path=DATA_DIR / "interacoes_clusterizadas.csv",
-    output_dir=REPORT_DIR / "assets"
+    output_dir=REPORT_DIR / "assets",
 ) -> None:
     """
     Reduz a dimensionalidade dos embeddings usando TSNE e gera visualizações 2D com anotações dos clusters.
@@ -43,7 +43,7 @@ def visualizar_tsne(
             data=df,
             s=80,
             alpha=0.85,
-            edgecolor="black"
+            edgecolor="black",
         )
 
         if -1 in df[cluster_col].values:
@@ -58,11 +58,25 @@ def visualizar_tsne(
                 cx = cluster_data["tsne_1"].mean()
                 cy = cluster_data["tsne_2"].mean()
 
-                tema = analise_df.loc[analise_df["cluster"] == cluster_id, "tema_detectado"].values
+                tema = analise_df.loc[
+                    analise_df["cluster"] == cluster_id, "tema_detectado"
+                ].values
                 if len(tema) > 0:
                     plt.text(
-                        cx, cy, tema[0], fontsize=9, weight="bold", ha="center", va="center",
-                        bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="black", lw=1, alpha=0.7)
+                        cx,
+                        cy,
+                        tema[0],
+                        fontsize=9,
+                        weight="bold",
+                        ha="center",
+                        va="center",
+                        bbox=dict(
+                            boxstyle="round,pad=0.3",
+                            fc="white",
+                            ec="black",
+                            lw=1,
+                            alpha=0.7,
+                        ),
                     )
         except Exception as e:
             print(f"⚠️ Não foi possível anotar os temas: {e}")
@@ -78,12 +92,16 @@ def visualizar_tsne(
 
     print("📊 Gerando gráficos analíticos...")
     plot_clusters(
-        "cluster_kmeans", "tsne_kmeans_com_tema.png",
-        "Distribuição TSNE por KMeans", OUTPUTS_DIR / "analise_kmeans.csv"
+        "cluster_kmeans",
+        "tsne_kmeans_com_tema.png",
+        "Distribuição TSNE por KMeans",
+        OUTPUTS_DIR / "analise_kmeans.csv",
     )
     plot_clusters(
-        "cluster_hdbscan", "tsne_hdbscan_com_tema.png",
-        "Distribuição TSNE por HDBSCAN", OUTPUTS_DIR / "analise_hdbscan.csv"
+        "cluster_hdbscan",
+        "tsne_hdbscan_com_tema.png",
+        "Distribuição TSNE por HDBSCAN",
+        OUTPUTS_DIR / "analise_hdbscan.csv",
     )
 
     print("✅ Gráficos com temas salvos em:")

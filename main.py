@@ -3,12 +3,11 @@ from app.services.gerar_embeddings import gerar_embeddings_csv
 from app.pipeline.clusterizar import aplicar_clustering
 from app.utils.visualizar import visualizar_tsne
 from app.pipeline.interpretar_clusters import gerar_resumo_cluster
-from app.utils.plotar_status_por_cluster import plotar_status_por_cluster
+from app.pipeline.plotar_status_por_cluster import plotar_status_por_cluster
 from app.utils.gerar_dashboard_html import gerar_dashboard_html
 
-from app.config.paths import DATA_DIR, OUTPUTS_DIR
+from app.config.paths import DATA_DIR
 import pandas as pd
-from pathlib import Path
 
 
 def main() -> None:
