@@ -1,37 +1,44 @@
-import os
-import requests
 import pandas as pd
+import requests
 from datetime import datetime
 from dotenv import load_dotenv
+import os
 
-# Carrega o token do arquivo .env
+from app.config.paths import DATA_DIR
+
+# Carrega variáveis de ambiente
 load_dotenv()
 HUBSPOT_TOKEN = os.getenv("HUBSPOT_TOKEN")
 
-# Endpoint da API de negócios (deals)
+# Endpoint e cabeçalhos
 URL = "https://api.hubapi.com/crm/v3/objects/deals"
-
-# Cabeçalhos com autenticação
 HEADERS = {
     "Authorization": f"Bearer {HUBSPOT_TOKEN}",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
 }
 
-# Campos desejados para análise estratégica
+# Propriedades desejadas
 PROPERTIES = [
-    "dealname",              # Nome do negócio
-    "dealstage",             # Etapa do pipeline
-    "pipeline",              # Qual pipeline de vendas está usando
-    "description",           # Descrição ou observação do negócio
-    "hubspot_owner_id",      # Responsável comercial interno
-    "createdate",            # Quando o negócio foi criado
-    "closedate",             # Quando foi fechado (se aplicável)
-    "hs_lastmodifieddate",   # Última atualização
-    "hs_source"              # Origem do negócio (se disponível)
-    # ➕ você pode adicionar mais campos aqui conforme existirem no seu portal
+    "dealname",
+    "dealstage",
+    "pipeline",
+    "description",
+    "hubspot_owner_id",
+    "createdate",
+    "closedate",
+    "hs_lastmodifieddate",
+    "hs_source",
 ]
 
-def extrair_dados_hubspot(salvar_em="data/interacoes_hubspot.csv", limite=100):
+
+def extrair_dados_hubspot(salvar_em=DATA_DIR / "interacoes_hubspot.csv", limite=100) -> None:
+    """
+    Extrai dados da API do HubSpot e salva em CSV para posterior análise.
+
+    Args:
+        salvar_em (Path): Caminho do arquivo de saída.
+        limite (int): Número máximo de registros a extrair.
+    """
     print("🔄 Extraindo dados da API do HubSpot...")
 
     params = {
@@ -46,8 +53,8 @@ def extrair_dados_hubspot(salvar_em="data/interacoes_hubspot.csv", limite=100):
         return
 
     resultados = response.json().get("results", [])
-
     dados = []
+
     for r in resultados:
         prop = r.get("properties", {})
         dados.append({
@@ -60,14 +67,15 @@ def extrair_dados_hubspot(salvar_em="data/interacoes_hubspot.csv", limite=100):
             "canal": prop.get("hs_source", ""),
             "data_criacao": prop.get("createdate", "")[:10],
             "data_fechamento": prop.get("closedate", "")[:10] if prop.get("closedate") else "",
-            "ultima_interacao": prop.get("hs_lastmodifieddate", "")[:10] if prop.get("hs_lastmodifieddate") else ""
+            "ultima_interacao": prop.get("hs_lastmodifieddate", "")[:10] if prop.get("hs_lastmodifieddate") else "",
         })
 
     df = pd.DataFrame(dados)
-    os.makedirs(os.path.dirname(salvar_em), exist_ok=True)
+    salvar_em.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(salvar_em, index=False)
 
     print(f"✅ Dados extraídos e salvos em: {salvar_em}")
+
 
 if __name__ == "__main__":
     extrair_dados_hubspot()

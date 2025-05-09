@@ -1,14 +1,29 @@
-from src.gerar_dados_hubspot import extrair_dados_hubspot
-from src.gerar_embeddings import gerar_embeddings_csv
-from src.clusterizar import aplicar_clustering
-from src.visualizar import visualizar_tsne
-from src.interpretar_clusters import gerar_resumo_cluster
-from src.plotar_status_por_cluster import plotar_status_por_cluster
-from src.gerar_dashboard_html import gerar_dashboard_html  # ✅ Etapa final
+from app.services.gerar_dados_hubspot import extrair_dados_hubspot
+from app.services.gerar_embeddings import gerar_embeddings_csv
+from app.pipeline.clusterizar import aplicar_clustering
+from app.utils.visualizar import visualizar_tsne
+from app.pipeline.interpretar_clusters import gerar_resumo_cluster
+from app.utils.plotar_status_por_cluster import plotar_status_por_cluster
+from app.utils.gerar_dashboard_html import gerar_dashboard_html
 
+from app.config.paths import DATA_DIR, OUTPUTS_DIR
 import pandas as pd
+from pathlib import Path
 
-def main():
+
+def main() -> None:
+    """
+    Executa o pipeline completo de inteligência comercial baseado em interações reais.
+
+    Etapas:
+        1. Extração de dados via HubSpot
+        2. Geração de embeddings com OpenAI
+        3. Clustering dos embeddings (KMeans e HDBSCAN)
+        4. Visualização TSNE com anotação de temas
+        5. Interpretação dos clusters via LLM
+        6. Gráficos de status por cluster
+        7. Geração de dashboard HTML
+    """
     print("📌 Iniciando pipeline completo de IA comercial...\n")
 
     # Etapa 1 – Extração via HubSpot
@@ -24,9 +39,9 @@ def main():
     visualizar_tsne()
 
     # Etapa 5 – Interpretação dos clusters
-    df = pd.read_csv("data/interacoes_clusterizadas.csv")
-    gerar_resumo_cluster(df, "cluster_kmeans", "outputs/analise_kmeans.csv")
-    gerar_resumo_cluster(df, "cluster_hdbscan", "outputs/analise_hdbscan.csv")
+    df = pd.read_csv(DATA_DIR / "interacoes_clusterizadas.csv")
+    gerar_resumo_cluster(df, "cluster_kmeans", "analise_kmeans.csv")
+    gerar_resumo_cluster(df, "cluster_hdbscan", "analise_hdbscan.csv")
 
     # Etapa 6 – Gráficos de performance por cluster
     plotar_status_por_cluster()
@@ -36,6 +51,7 @@ def main():
 
     print("\n✅ Pipeline finalizado com sucesso.")
     print("📁 Relatório disponível em: report/index.html")
+
 
 if __name__ == "__main__":
     main()

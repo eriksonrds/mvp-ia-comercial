@@ -1,32 +1,72 @@
 from flask import Flask, render_template, send_file, send_from_directory, request
 import subprocess
-import os
 import sys
+from pathlib import Path
+
+# Define caminhos base
+BASE_DIR = Path(__file__).resolve().parent
+REPORT_DIR = BASE_DIR / "report"
+ASSETS_DIR = REPORT_DIR / "assets"
 
 app = Flask(__name__)
 
+
 @app.route("/")
-def index():
+def index() -> str:
+    """
+    Página principal do frontend.
+
+    Returns:
+        str: HTML da tela inicial com botão de geração.
+    """
     return render_template("index.html")
 
+
 @app.route("/gerar", methods=["POST"])
-def gerar():
+def gerar() -> tuple[str, int]:
+    """
+    Executa o pipeline principal ao clicar no botão "Gerar".
+
+    Returns:
+        tuple[str, int]: Resposta HTTP com status 200 ou erro 500.
+    """
     try:
-        subprocess.run([sys.executable, "main.py"], check=True)
+        subprocess.run(
+            [sys.executable, "main.py"],
+            check=True,
+            cwd=BASE_DIR
+        )
         return "", 200
     except subprocess.CalledProcessError as e:
-        return f"Erro ao gerar relatório: {str(e)}", 500
+        return f"❌ Erro ao gerar relatório: {str(e)}", 500
     except Exception as e:
-        return f"Erro inesperado: {str(e)}", 500
+        return f"❌ Erro inesperado: {str(e)}", 500
+
 
 @app.route("/report")
 def mostrar_dashboard():
-    return send_file("report/index.html")
+    """
+    Exibe o dashboard HTML gerado após execução do pipeline.
 
-# ✅ Adicione esta rota para servir os arquivos da pasta assets
+    Returns:
+        Response: Arquivo HTML renderizado.
+    """
+    return send_file(REPORT_DIR / "index.html")
+
+
 @app.route("/assets/<path:filename>")
-def assets(filename):
-    return send_from_directory("report/assets", filename)
+def assets(filename: str):
+    """
+    Serve os arquivos estáticos do dashboard (imagens, CSS).
+
+    Args:
+        filename (str): Caminho do arquivo dentro da pasta assets.
+
+    Returns:
+        Response: Arquivo solicitado (imagem, CSS, etc).
+    """
+    return send_from_directory(ASSETS_DIR, filename)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

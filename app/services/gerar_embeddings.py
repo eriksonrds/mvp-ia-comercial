@@ -1,22 +1,35 @@
 import pandas as pd
-import os
 import traceback
-from dotenv import load_dotenv
-from openai import OpenAI
 from time import sleep
 import httpx
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
 
-# Carrega a chave da OpenAI
+from app.config.paths import DATA_DIR
+
+# Carrega variáveis de ambiente
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
-# Cria cliente ignorando verificação de certificado SSL (⚠️ somente para ambiente local/teste)
+# Cria cliente ignorando SSL (ambiente local/teste)
 client = OpenAI(
     api_key=api_key,
     http_client=httpx.Client(verify=False)
 )
 
-def gerar_embeddings_csv(input_path="data/interacoes_hubspot.csv", output_path="data/interacoes_com_embeddings.csv"):
+
+def gerar_embeddings_csv(
+    input_path=DATA_DIR / "interacoes_hubspot.csv",
+    output_path=DATA_DIR / "interacoes_com_embeddings.csv"
+) -> None:
+    """
+    Gera embeddings com base no contexto de interações comerciais e salva em CSV.
+
+    Args:
+        input_path (Path): Caminho para o CSV de entrada com as interações brutas.
+        output_path (Path): Caminho onde será salvo o CSV com os embeddings.
+    """
     df = pd.read_csv(input_path)
     embeddings = []
 
@@ -49,7 +62,6 @@ def gerar_embeddings_csv(input_path="data/interacoes_hubspot.csv", output_path="
                 print(f"\n⚠️ Tentativa {tentativa + 1} falhou para linha {i}")
                 print(f"→ Tipo de erro: {type(e).__name__}")
                 print(f"→ Mensagem: {str(e)}")
-                print("→ Traceback:")
                 traceback.print_exc()
                 sleep(2 ** tentativa)
 
@@ -59,14 +71,15 @@ def gerar_embeddings_csv(input_path="data/interacoes_hubspot.csv", output_path="
 
         embeddings.append(embedding)
 
-    # Criação do DataFrame de embeddings
     emb_df = pd.DataFrame(embeddings)
     emb_df.columns = [f"emb_{i}" for i in range(emb_df.shape[1])]
     df_emb = pd.concat([df, emb_df], axis=1)
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     df_emb.to_csv(output_path, index=False)
 
     print(f"\n✅ Embeddings com contexto salvos em: {output_path}")
+
 
 if __name__ == "__main__":
     gerar_embeddings_csv()

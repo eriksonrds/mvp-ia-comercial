@@ -2,9 +2,22 @@ import pandas as pd
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import seaborn as sns
-import os
+from pathlib import Path
 
-def visualizar_tsne(input_path="data/interacoes_clusterizadas.csv", output_dir="report/assets"):
+from app.config.paths import DATA_DIR, OUTPUTS_DIR, REPORT_DIR
+
+
+def visualizar_tsne(
+    input_path=DATA_DIR / "interacoes_clusterizadas.csv",
+    output_dir=REPORT_DIR / "assets"
+) -> None:
+    """
+    Reduz a dimensionalidade dos embeddings usando TSNE e gera visualizações 2D com anotações dos clusters.
+
+    Args:
+        input_path (Path): Caminho para o CSV com os dados e embeddings.
+        output_dir (Path): Diretório onde os gráficos serão salvos.
+    """
     df = pd.read_csv(input_path)
     embedding_cols = [col for col in df.columns if col.startswith("emb_")]
     X = df[embedding_cols].values
@@ -16,9 +29,9 @@ def visualizar_tsne(input_path="data/interacoes_clusterizadas.csv", output_dir="
     df["tsne_1"] = X_2d[:, 0]
     df["tsne_2"] = X_2d[:, 1]
 
-    os.makedirs(output_dir, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    def plot_clusters(cluster_col, filename, title, analise_path):
+    def plot_clusters(cluster_col: str, filename: str, title: str, analise_path: Path):
         plt.figure(figsize=(12, 8))
         n_outliers = (df[cluster_col] == -1).sum()
 
@@ -60,16 +73,23 @@ def visualizar_tsne(input_path="data/interacoes_clusterizadas.csv", output_dir="
         plt.legend(title="Cluster", bbox_to_anchor=(1.05, 1), loc="upper left")
         plt.grid(True, linestyle="--", alpha=0.5)
         plt.tight_layout()
-        plt.savefig(os.path.join(output_dir, filename), dpi=300)
+        plt.savefig(output_dir / filename, dpi=300)
         plt.close()
 
     print("📊 Gerando gráficos analíticos...")
-    plot_clusters("cluster_kmeans", "tsne_kmeans_com_tema.png", "Distribuição TSNE por KMeans", "outputs/analise_kmeans.csv")
-    plot_clusters("cluster_hdbscan", "tsne_hdbscan_com_tema.png", "Distribuição TSNE por HDBSCAN", "outputs/analise_hdbscan.csv")
+    plot_clusters(
+        "cluster_kmeans", "tsne_kmeans_com_tema.png",
+        "Distribuição TSNE por KMeans", OUTPUTS_DIR / "analise_kmeans.csv"
+    )
+    plot_clusters(
+        "cluster_hdbscan", "tsne_hdbscan_com_tema.png",
+        "Distribuição TSNE por HDBSCAN", OUTPUTS_DIR / "analise_hdbscan.csv"
+    )
 
     print("✅ Gráficos com temas salvos em:")
-    print(f"   → {output_dir}/tsne_kmeans_com_tema.png")
-    print(f"   → {output_dir}/tsne_hdbscan_com_tema.png")
+    print(f"   → {output_dir / 'tsne_kmeans_com_tema.png'}")
+    print(f"   → {output_dir / 'tsne_hdbscan_com_tema.png'}")
+
 
 if __name__ == "__main__":
     visualizar_tsne()

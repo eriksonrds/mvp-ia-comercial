@@ -1,15 +1,23 @@
-import pandas as pd
 from datetime import datetime
-import os
+from pathlib import Path
+import pandas as pd
 
-def gerar_dashboard_html():
-    os.makedirs("report", exist_ok=True)
+from app.config.paths import REPORT_DIR, OUTPUTS_DIR, REPORT_DIR
+
+
+def gerar_dashboard_html() -> None:
+    """
+    Gera um dashboard HTML visualizando os resultados de análise por cluster.
+
+    Inclui imagens, tabelas e metadados das análises feitas por KMeans e HDBSCAN.
+    """
+    REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     assets_path = "assets"
-    html_path = "report/index.html"
+    html_path = REPORT_DIR / "index.html"
 
-    analise_kmeans = pd.read_csv("outputs/analise_kmeans.csv").to_html(index=False, classes="tabela")
-    analise_hdbscan = pd.read_csv("outputs/analise_hdbscan.csv").to_html(index=False, classes="tabela")
+    analise_kmeans = pd.read_csv(OUTPUTS_DIR / "analise_kmeans.csv").to_html(index=False, classes="tabela")
+    analise_hdbscan = pd.read_csv(OUTPUTS_DIR / "analise_hdbscan.csv").to_html(index=False, classes="tabela")
 
     def imagem_dupla(img1, img2, legenda1, legenda2):
         return f'''
@@ -70,6 +78,7 @@ def gerar_dashboard_html():
         f.write(html)
 
     print(f"✅ Dashboard HTML salvo em: {html_path}")
+
 
 if __name__ == "__main__":
     gerar_dashboard_html()
