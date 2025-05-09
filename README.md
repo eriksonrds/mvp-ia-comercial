@@ -53,42 +53,42 @@ O pipeline implementado neste projeto realiza:
 
 ---
 
-## Estrutura de Diretórios
+## Estrutura de Diretórios (Nova)
 
 ```
- src/
- ├── gerar_dados_hubspot.py
- ├── gerar_embeddings.py
- ├── clusterizar.py
- ├── visualizar.py
- └── interpretar_clusters.py
-
- data/
- ├── interacoes_hubspot.csv
- ├── interacoes_com_embeddings.csv
- └── interacoes_clusterizadas.csv
-
- outputs/
- ├── tsne_kmeans.png
- ├── tsne_hdbscan.png
- ├── resumos_kmeans.csv
- └── resumos_hdbscan.csv
+app/
+├── config/
+│   └── paths.py
+├── pipeline/
+│   ├── clusterizar.py
+│   ├── interpretar_clusters.py
+├── services/
+│   ├── gerar_dados_hubspot.py
+│   └── gerar_embeddings.py
+├── utils/
+│   ├── gerar_dashboard_html.py
+│   ├── plotar_status_por_cluster.py
+│   └── visualizar.py
 
 main.py
+app.py
 requirements.txt
-.env (não subir para o GitHub)
-README.md
+.env
+report/
+data/
+outputs/
+templates/
 ```
 
 ---
 
 ## Autenticação
 
-A API da OpenAI e a API do HubSpot exigem tokens privados para uso. As chaves são lidas via arquivo `.env`. Exemplo de configuração:
+As APIs da OpenAI e HubSpot utilizam tokens privados. As chaves devem estar no arquivo `.env`. Exemplo:
 
 ```
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-HUBSPOT_PRIVATE_TOKEN=pat-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+HUBSPOT_TOKEN=pat-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 
 ---
