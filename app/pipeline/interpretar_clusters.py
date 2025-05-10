@@ -107,7 +107,23 @@ def gerar_resumo_cluster(
     print(f"\n✅ Análise dos clusters salva em: {output_path}")
 
 
-if __name__ == "__main__":
-    df = pd.read_csv(DATA_DIR / "interacoes_clusterizadas.csv")
-    gerar_resumo_cluster(df, "cluster_kmeans", "analise_kmeans.csv")
-    gerar_resumo_cluster(df, "cluster_hdbscan", "analise_hdbscan.csv")
+def carregar_insights_clusters() -> dict:
+    """
+    Lê os arquivos CSV de análise por cluster e retorna como dicionário para o frontend.
+
+    Returns:
+        dict: {
+            "kmeans": [ {cluster, tema_detectado, ...}, ... ],
+            "hdbscan": [ {...}, ... ]
+        }
+    """
+    insights = {}
+    for algoritmo in ["kmeans", "hdbscan"]:
+        file = OUTPUTS_DIR / f"analise_{algoritmo}.csv"
+        if file.exists():
+            df = pd.read_csv(file)
+            insights[algoritmo] = df.to_dict(orient="records")
+        else:
+            insights[algoritmo] = []
+    return insights
+

@@ -15,9 +15,9 @@
       </div>
       <nav>
         <ul>
-          <li class="active">Dashboard</li>
-          <li>Reports</li>
-          <li>Settings</li>
+          <li class="active"><a href="/">Dashboard</a></li>
+          <li><a href="/reports">Reports</a></li>
+          <li><a href="#">Settings</a></li>
         </ul>
       </nav>
     </aside>
@@ -26,14 +26,7 @@
       <header class="header">
         <img src="{{ url_for('static', filename='logo_logcomex.png') }}" alt="Logcomex" class="logcomex-logo" />
         <h1>Inteligência Comercial da Logcomex</h1>
-        <form action="/gerar" method="post">
-          <button type="submit" class="btn">Gerar Relatório</button>
-        </form>
       </header>
-
-      {% if gerando %}
-        <p class="loading">Gerando relatório...</p>
-      {% endif %}
 
       <div class="cards">
         <div class="card">
@@ -48,13 +41,11 @@
     </main>
   </div>
 
-  <!-- Plotly CDN -->
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script>
     fetch("/dados")
       .then(res => res.json())
       .then(data => {
-        // Gráfico de Barras
         const x_barras = data.barras.map(item => item.status);
         const y_barras = data.barras.map(item => item.quantidade);
 
@@ -63,11 +54,8 @@
           y: y_barras,
           type: "bar",
           marker: { color: "#F7931E" }
-        }], {
-          title: "Leads por Motivo"
-        });
+        }]);
 
-        // Gráfico de Clusters
         const clusters = Object.entries(data.clusters).map(([nome, pontos]) => ({
           x: pontos.map(p => p[0]),
           y: pontos.map(p => p[1]),

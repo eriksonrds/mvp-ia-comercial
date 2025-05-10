@@ -1,61 +1,41 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from app.config.paths import DATA_DIR, REPORT_DIR
+from app.config.paths import DATA_DIR
 
-
-def plotar_status_por_cluster(
+def gerar_status_por_cluster_dados(
     df_path: str = DATA_DIR / "interacoes_clusterizadas.csv",
-    output_dir: str = REPORT_DIR / "assets",
-) -> None:
+    cluster_cols: list[str] = ["cluster_kmeans", "cluster_hdbscan"]
+) -> dict:
     """
-    Gera gráficos de barras com a distribuição dos status dos negócios por cluster.
+    Gera dados agregados com a distribuição de status por cluster.
 
     Args:
-        df_path (str | Path): Caminho do CSV com os clusters e status.
-        output_dir (str | Path): Diretório onde os gráficos serão salvos.
+        df_path (Path): Caminho do arquivo CSV com os dados clusterizados.
+        cluster_cols (list[str]): Lista de colunas de cluster a serem processadas.
+
+    Returns:
+        dict: Dados por coluna de cluster, no formato:
+            {
+                "cluster_kmeans": [{cluster, status, quantidade}, ...],
+                "cluster_hdbscan": [...]
+            }
     """
     df = pd.read_csv(df_path)
-    output_dir.mkdir(parents=True, exist_ok=True)
+    resultado = {}
 
-    def gerar_plot(cluster_col: str, filename: str, titulo: str):
-        plt.figure(figsize=(12, 8))
+    for cluster_col in cluster_cols:
         agrupado = (
-            df.groupby([cluster_col, "status"]).size().reset_index(name="quantidade")
+            df.groupby([cluster_col, "status"])
+            .size()
+            .reset_index(name="quantidade")
         )
 
-        sns.barplot(data=agrupado, x=cluster_col, y="quantidade", hue="status")
+        resultado[cluster_col] = agrupado.to_dict(orient="records")
 
-        plt.title(titulo)
-        plt.xlabel("Cluster")
-        plt.ylabel("Quantidade")
-        plt.legend(
-            title="Status do negócio",
-            loc="upper center",
-            bbox_to_anchor=(0.5, -0.12),
-            ncol=3,
-            frameon=False,
-        )
-        plt.tight_layout()
-        plt.savefig(output_dir / filename, dpi=300)
-        plt.close()
-
-    print("📊 Gerando gráfico de status por cluster...")
-    gerar_plot(
-        "cluster_kmeans",
-        "status_por_cluster_kmeans.png",
-        "Distribuição de status por cluster (KMeans)",
-    )
-    gerar_plot(
-        "cluster_hdbscan",
-        "status_por_cluster_hdbscan.png",
-        "Distribuição de status por cluster (HDBSCAN)",
-    )
-
-    print("✅ Gráficos salvos em:")
-    print(f"   → {output_dir / 'status_por_cluster_kmeans.png'}")
-    print(f"   → {output_dir / 'status_por_cluster_hdbscan.png'}")
+    return resultado
 
 
+# Exemplo de uso (debug/teste)
 if __name__ == "__main__":
-    plotar_status_por_cluster()
+    dados = gerar_status_por_cluster_dados()
+    from pprint import pprint
+    pprint(dados)

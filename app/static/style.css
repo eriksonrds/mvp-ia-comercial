@@ -6,7 +6,7 @@ body {
 
 .container {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .sidebar {
@@ -14,6 +14,8 @@ body {
   background-color: #4b0082;
   color: white;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .logo-area {
@@ -36,11 +38,20 @@ body {
 .sidebar ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .sidebar li {
   padding: 10px 0;
   cursor: pointer;
+  color: white;
+  font-size: 15px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.sidebar li:hover {
+  color: #f7931e;
 }
 
 .sidebar li.active {
@@ -78,19 +89,27 @@ body {
   font-weight: bold;
   cursor: pointer;
   border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #e48100;
 }
 
 .cards {
   display: flex;
   gap: 30px;
+  flex-wrap: wrap;
+  align-items: stretch;
 }
 
 .card {
-  flex: 1;
+  flex: 1 1 45%;
   background: white;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  min-width: 350px;
 }
 
 .card img {
@@ -102,4 +121,26 @@ body {
   font-size: 18px;
   font-weight: bold;
   color: #4b0082;
+}
+
+.insight-bloco {
+  background-color: #fff;
+  padding: 20px;
+  margin-top: 20px;
+  border-left: 5px solid #6C2BD9;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+
+.insight-bloco h4 {
+  margin-bottom: 10px;
+  color: #6C2BD9;
+  font-size: 16px;
+}
+
+.insight-bloco p {
+  margin: 6px 0;
+  color: #444;
+  font-size: 14px;
+  line-height: 1.5;
 }

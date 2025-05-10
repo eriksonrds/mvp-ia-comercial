@@ -108,6 +108,7 @@ def visualizar_tsne(
     print(f"   → {output_dir / 'tsne_kmeans_com_tema.png'}")
     print(f"   → {output_dir / 'tsne_hdbscan_com_tema.png'}")
 
+    df.to_csv(input_path, index=False)
 
 if __name__ == "__main__":
     visualizar_tsne()
