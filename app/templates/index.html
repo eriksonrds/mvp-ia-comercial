@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Córtex - Logcomex</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo-area">
+        <img src="{{ url_for('static', filename='logo_ai_cortex.png') }}" alt="AI Córtex" class="logo" />
+        <span class="title">AI-CÓRTEX</span>
+      </div>
+      <nav>
+        <ul>
+          <li class="active">Dashboard</li>
+          <li>Reports</li>
+          <li>Settings</li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="header">
+        <img src="{{ url_for('static', filename='logo_logcomex.png') }}" alt="Logcomex" class="logcomex-logo" />
+        <h1>Inteligência Comercial da Logcomex</h1>
+        <form action="/gerar" method="post">
+          <button type="submit" class="btn">Gerar Relatório</button>
+        </form>
+      </header>
+
+      {% if gerando %}
+        <p class="loading">Gerando relatório...</p>
+      {% endif %}
+
+      <div class="cards">
+        <div class="card">
+          <h3>Leads por Motivo</h3>
+          <div id="grafico-barras" style="height: 400px;"></div>
+        </div>
+        <div class="card">
+          <h3>Agrupamento de Leads (Clusters)</h3>
+          <div id="grafico-clusters" style="height: 400px;"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Plotly CDN -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script>
+    fetch("/dados")
+      .then(res => res.json())
+      .then(data => {
+        // Gráfico de Barras
+        const x_barras = data.barras.map(item => item.status);
+        const y_barras = data.barras.map(item => item.quantidade);
+
+        Plotly.newPlot("grafico-barras", [{
+          x: x_barras,
+          y: y_barras,
+          type: "bar",
+          marker: { color: "#F7931E" }
+        }], {
+          title: "Leads por Motivo"
+        });
+
+        // Gráfico de Clusters
+        const clusters = Object.entries(data.clusters).map(([nome, pontos]) => ({
+          x: pontos.map(p => p[0]),
+          y: pontos.map(p => p[1]),
+          mode: "markers",
+          type: "scatter",
+          name: `Cluster ${nome}`,
+          marker: { size: 8 }
+        }));
+
+        Plotly.newPlot("grafico-clusters", clusters, {
+          title: "Agrupamento de Leads",
+          showlegend: true
+        });
+      });
+  </script>
+</body>
+</html>

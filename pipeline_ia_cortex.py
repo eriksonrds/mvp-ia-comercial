@@ -3,16 +3,12 @@ from app.services.gerar_embeddings import gerar_embeddings_csv
 from app.pipeline.clusterizar import aplicar_clustering
 from app.utils.visualizar import visualizar_tsne
 from app.pipeline.interpretar_clusters import gerar_resumo_cluster
-from app.pipeline.plotar_status_por_cluster import plotar_status_por_cluster
-from app.utils.gerar_dashboard_html import gerar_dashboard_html
-
 from app.config.paths import DATA_DIR
 import pandas as pd
 
-
-def main() -> None:
+def executar_pipeline_ia() -> None:
     """
-    Executa o pipeline completo de inteligência comercial baseado em interações reais.
+    Executa o pipeline de preparação de dados para o AI Córtex.
 
     Etapas:
         1. Extração de dados via HubSpot
@@ -20,10 +16,8 @@ def main() -> None:
         3. Clustering dos embeddings (KMeans e HDBSCAN)
         4. Visualização TSNE com anotação de temas
         5. Interpretação dos clusters via LLM
-        6. Gráficos de status por cluster
-        7. Geração de dashboard HTML
     """
-    print("📌 Iniciando pipeline completo de IA comercial...\n")
+    print("📌 Iniciando pipeline de preparação de dados para o AI Córtex...\n")
 
     # Etapa 1 – Extração via HubSpot
     extrair_dados_hubspot()
@@ -37,20 +31,14 @@ def main() -> None:
     # Etapa 4 – Visualização com TSNE
     visualizar_tsne()
 
-    # Etapa 5 – Interpretação dos clusters
+    # Etapa 5 – Interpretação dos clusters com GPT
     df = pd.read_csv(DATA_DIR / "interacoes_clusterizadas.csv")
     gerar_resumo_cluster(df, "cluster_kmeans", "analise_kmeans.csv")
     gerar_resumo_cluster(df, "cluster_hdbscan", "analise_hdbscan.csv")
 
-    # Etapa 6 – Gráficos de performance por cluster
-    plotar_status_por_cluster()
-
-    # Etapa 7 – Geração do dashboard HTML final
-    gerar_dashboard_html()
-
     print("\n✅ Pipeline finalizado com sucesso.")
-    print("📁 Relatório disponível em: report/index.html")
+    print("📁 Arquivos prontos para visualização no AI Córtex.")
 
 
 if __name__ == "__main__":
-    main()
+    executar_pipeline_ia()

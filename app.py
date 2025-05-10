@@ -1,72 +1,59 @@
-from flask import Flask, render_template, send_file, send_from_directory, request
-import subprocess
-import sys
+from flask import Flask, render_template, send_file, send_from_directory, jsonify
 from pathlib import Path
+import pandas as pd
 
 # Define caminhos base
 BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "data"
 REPORT_DIR = BASE_DIR / "report"
 ASSETS_DIR = REPORT_DIR / "assets"
 
-app = Flask(__name__)
-
+app = Flask(
+    __name__,
+    static_folder="app/static",       # Ajuste conforme seu projeto
+    template_folder="app/templates"
+)
 
 @app.route("/")
-def index() -> str:
+def index():
     """
-    Página principal do frontend.
-
-    Returns:
-        str: HTML da tela inicial com botão de geração.
+    Página principal do AI Córtex.
     """
-    return render_template("index.html")
+    return render_template("index.html", gerando=False)
 
-
-@app.route("/gerar", methods=["POST"])
-def gerar() -> tuple[str, int]:
+@app.route("/dados")
+def dados():
     """
-    Executa o pipeline principal ao clicar no botão "Gerar".
-
-    Returns:
-        tuple[str, int]: Resposta HTTP com status 200 ou erro 500.
+    Retorna os dados processados a partir do CSV para os gráficos do dashboard.
     """
-    try:
-        subprocess.run(
-            [sys.executable, "main.py"],
-            check=True,
-            cwd=BASE_DIR
-        )
-        return "", 200
-    except subprocess.CalledProcessError as e:
-        return f"❌ Erro ao gerar relatório: {str(e)}", 500
-    except Exception as e:
-        return f"❌ Erro inesperado: {str(e)}", 500
+    df = pd.read_csv(DATA_DIR / "interacoes_clusterizadas.csv")
 
+    # Gráfico de barras: leads por status
+    barras = df["status"].value_counts().reset_index()
+    barras.columns = ["status", "quantidade"]
+    barras = barras.to_dict(orient="records")
+
+    # Gráfico de clusters: x, y por cluster_kmeans
+    clusters = df.groupby("cluster_kmeans")[["x", "y"]].apply(lambda g: g.values.tolist()).to_dict()
+
+    return jsonify({
+        "barras": barras,
+        "clusters": clusters
+    })
 
 @app.route("/report")
 def mostrar_dashboard():
     """
-    Exibe o dashboard HTML gerado após execução do pipeline.
-
-    Returns:
-        Response: Arquivo HTML renderizado.
+    Exibe o dashboard HTML legado, se necessário.
     """
     return send_file(REPORT_DIR / "index.html")
-
 
 @app.route("/assets/<path:filename>")
 def assets(filename: str):
     """
     Serve os arquivos estáticos do dashboard (imagens, CSS).
-
-    Args:
-        filename (str): Caminho do arquivo dentro da pasta assets.
-
-    Returns:
-        Response: Arquivo solicitado (imagem, CSS, etc).
     """
     return send_from_directory(ASSETS_DIR, filename)
-
 
 if __name__ == "__main__":
     app.run(debug=True)
