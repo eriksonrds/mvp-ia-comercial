@@ -3,39 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Córtex - Logcomex</title>
+  <title>AI Cortex - Logcomex</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
   <div class="container">
     <aside class="sidebar">
       <div class="logo-area">
-        <img src="{{ url_for('static', filename='logo_ai_cortex.png') }}" alt="AI Córtex" class="logo" />
+        <img src="{{ url_for('static', filename='logo_ai_cortex.png') }}" alt="AI Córtex" class="logo large-logo" />
         <span class="title">AI-CÓRTEX</span>
       </div>
       <nav>
         <ul>
-          <li class="active"><a href="/">Dashboard</a></li>
-          <li><a href="/reports">Reports</a></li>
-          <li><a href="#">Settings</a></li>
+          <li class="active"><a class="menu-item" href="/"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+          <li><a class="menu-item" href="/insights"><i class="fas fa-lightbulb"></i><span>Insights</span></a></li>
+          <li><a class="menu-item" href="#"><i class="fas fa-cog"></i><span>Settings</span></a></li>
         </ul>
       </nav>
     </aside>
 
     <main class="content">
-      <header class="header">
-        <img src="{{ url_for('static', filename='logo_logcomex.png') }}" alt="Logcomex" class="logcomex-logo" />
-        <h1>Inteligência Comercial da Logcomex</h1>
-      </header>
+      <div class="header">
+        <div class="header-left">
+          <img src="{{ url_for('static', filename='logo_logcomex.png') }}" alt="Logcomex" class="logo large-logo" />
+          <span>Hub de Inteligência Comercial - RevOps</span>
+        </div>
+        <div class="header-right">
+          <span>Olá, Erikson Rodrigues dos Santos!</span>
+          <img src="{{ url_for('static', filename='avatar.png') }}" alt="Avatar" class="avatar" />
+        </div>
+      </div>
+
+      <div style="padding: 30px 40px 0;">
+        <button class="btn" id="executar-btn">🚀 Gerar Relatório</button>
+        <p id="status-msg" class="loading" style="display:none; margin-top: 10px;">
+          <span class="spinner"></span>Gerando relatório... aguarde.
+        </p>
+      </div>
 
       <div class="cards">
         <div class="card">
-          <h3>Leads por Motivo</h3>
-          <div id="grafico-barras" style="height: 400px;"></div>
+          <h3>Número de Leads por Motivo</h3>
+          <div id="grafico-barras"></div>
         </div>
         <div class="card">
-          <h3>Agrupamento de Leads (Clusters)</h3>
-          <div id="grafico-clusters" style="height: 400px;"></div>
+          <h3>Agrupamento de Leads</h3>
+          <div id="grafico-clusters"></div>
+        </div>
+        <div class="card">
+          <h3>Motivos Reais de Sucesso</h3>
+          <div id="grafico-motivo-sucesso"></div>
+        </div>
+        <div class="card">
+          <h3>Motivos Reais de Perda</h3>
+          <div id="grafico-motivo-perda"></div>
+        </div>
+        <div class="card">
+          <h3>Negócios Criados por Mês</h3>
+          <div id="grafico-negocios-mes"></div>
+        </div>
+        <div class="card">
+          <h3>Negócios Fechados por Mês</h3>
+          <div id="grafico-negocios-fechados"></div>
         </div>
       </div>
     </main>
@@ -43,6 +73,27 @@
 
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script>
+    const btn = document.getElementById("executar-btn");
+    const status = document.getElementById("status-msg");
+
+    btn.addEventListener("click", () => {
+      status.style.display = "block";
+      status.innerHTML = '<span class="spinner"></span>Gerando relatório... aguarde.';
+      fetch("/executar-pipeline", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "ok") {
+            status.innerHTML = "✅ Relatório gerado com sucesso!";
+            setTimeout(() => location.reload(), 2000);
+          } else {
+            status.innerHTML = "❌ Erro ao gerar relatório.";
+          }
+        })
+        .catch(() => {
+          status.innerHTML = "❌ Erro ao gerar relatório.";
+        });
+    });
+
     fetch("/dados")
       .then(res => res.json())
       .then(data => {
@@ -50,24 +101,84 @@
         const y_barras = data.barras.map(item => item.quantidade);
 
         Plotly.newPlot("grafico-barras", [{
-          x: x_barras,
-          y: y_barras,
+          x: y_barras,
+          y: x_barras,
           type: "bar",
-          marker: { color: "#F7931E" }
-        }]);
+          orientation: "h",
+          marker: {
+            color: ["#4b0082", "#f7931e", "#ffa84b", "#d1b3ff", "#000000", "#cccccc"]
+          }
+        }], {
+          margin: { l: 150, r: 30, t: 10, b: 40 },
+          responsive: true
+        });
 
-        const clusters = Object.entries(data.clusters).map(([nome, pontos]) => ({
+        const clusters = Object.entries(data.clusters).map(([id, pontos]) => ({
           x: pontos.map(p => p[0]),
           y: pontos.map(p => p[1]),
           mode: "markers",
           type: "scatter",
-          name: `Cluster ${nome}`,
-          marker: { size: 8 }
+          name: data.nomes_clusters?.[id] || `Cluster ${id}`,
+          marker: { size: 10 }
         }));
 
         Plotly.newPlot("grafico-clusters", clusters, {
-          title: "Agrupamento de Leads",
-          showlegend: true
+          showlegend: true,
+          legend: {
+            orientation: "h",
+            x: 0,
+            y: -0.1,
+            xanchor: "left",
+            yanchor: "top",
+          },
+          margin: { l: 20, r: 20, t: 20, b: 60 },
+          responsive: true
+        });
+
+        // Motivos sucesso
+        const motivo_sucesso = data.motivos_sucesso || [];
+        Plotly.newPlot("grafico-motivo-sucesso", [{
+          labels: motivo_sucesso.map(item => item.motivo),
+          values: motivo_sucesso.map(item => item.quantidade),
+          type: "pie"
+        }], {
+          margin: { t: 10, b: 10, l: 10, r: 10 },
+          showlegend: true,
+          responsive: true
+        });
+
+
+        // Motivos perda
+        const motivo_perda = data.motivos_perda || [];
+        Plotly.newPlot("grafico-motivo-perda", [{
+          labels: motivo_perda.map(item => item.motivo),
+          values: motivo_perda.map(item => item.quantidade),
+          type: "pie"
+        }], {
+          margin: { t: 10, b: 10, l: 10, r: 10 },
+          showlegend: true,
+          responsive: true
+        });
+
+
+        // Negócios criados por mês
+        const negocios_mes = data.negocios_por_mes || [];
+        Plotly.newPlot("grafico-negocios-mes", [{
+          x: negocios_mes.map(item => item.mes.replace("-", "/")),
+          y: negocios_mes.map(item => item.quantidade),
+          type: "bar"
+        }], {
+          margin: { t: 10, b: 40 }
+        });
+
+        // Negócios fechados por mês
+        const fechados_mes = data.negocios_fechados_por_mes || [];
+        Plotly.newPlot("grafico-negocios-fechados", [{
+          x: fechados_mes.map(item => item.mes.replace("-", "/")),
+          y: fechados_mes.map(item => item.quantidade),
+          type: "bar"
+        }], {
+          margin: { t: 10, b: 40 }
         });
       });
   </script>

@@ -18,7 +18,7 @@ O pipeline implementado neste projeto realiza:
 2. **Geração de embeddings semânticos** com a API da OpenAI.
 3. **Clusterização** com KMeans e HDBSCAN para agrupar motivos de compra/perda.
 4. **Visualização dos clusters** com TSNE em gráficos 2D.
-5. **Interpretação automática dos clusters** com GPT-4o.
+5. **Interpretação automática dos clusters** com GPT-4.
 6. **Geração de dashboards interativos e relatórios CSV.**
 
 ---
@@ -28,10 +28,10 @@ O pipeline implementado neste projeto realiza:
 | Categoria           | Ferramentas / Tecnologias                |
 | ------------------- | ---------------------------------------- |
 | Linguagem principal | Python                                   |
-| IA e NLP            | OpenAI Embeddings, GPT-4o                |
+| IA e NLP            | OpenAI Embeddings, GPT-4                 |
 | Clustering          | Scikit-learn (KMeans), HDBSCAN           |
 | Visualização        | Matplotlib, Seaborn, TSNE                |
-| Web (opcional)      | Flask (Interface interativa)             |
+| Web                 | Flask (Interface interativa)             |
 | Dados / Integração  | HubSpot API                              |
 | Infraestrutura      | Compatível com AWS, servidor local ou VM |
 
@@ -46,38 +46,42 @@ O pipeline implementado neste projeto realiza:
         ↓
 [Clustering] → KMeans e HDBSCAN agrupam motivos semelhantes
         ↓
-[GPT-4o] → Geração automática de resumos dos motivos por cluster
+[GPT-4] → Geração automática de resumos dos motivos por cluster
         ↓
 [Dashboards / CSV] → Visualizações, gráficos e insights acionáveis
 ```
 
 ---
 
-## Estrutura de Diretórios (Nova)
+## Estrutura de Diretórios
 
 ```
 app/
 ├── config/
-│   └── paths.py
+│   ├── config.py                # Configurações gerais do projeto
+│   └── paths.py                 # Definição de caminhos base
+├── core/
+│   └── routes.py                # Rotas principais do Flask
 ├── pipeline/
-│   ├── clusterizar.py
-│   ├── interpretar_clusters.py
+│   ├── clusterizar.py           # Algoritmos de clusterização (KMeans e HDBSCAN)
+│   ├── interpretar_clusters.py  # Interpretação dos clusters com GPT
+│   └── preparar_dados_dashboard.py # Pipeline para preparar dados do dashboard
+├── presentation/
+│   └── plotar_status_por_cluster.py # Geração de dados de status por cluster
 ├── services/
-│   ├── gerar_dados_hubspot.py
-│   └── gerar_embeddings.py
+│   ├── gerar_dados_hubspot.py   # Extração de dados da API do HubSpot
+│   └── gerar_embeddings.py      # Geração de embeddings com OpenAI
+├── static/                      # Arquivos estáticos (CSS, imagens)
+├── templates/                   # Templates HTML para renderização no Flask
 ├── utils/
-│   ├── gerar_dashboard_html.py
-│   ├── plotar_status_por_cluster.py
-│   └── visualizar.py
-
-main.py
-app.py
-requirements.txt
-.env
-report/
-data/
-outputs/
-templates/
+│   └── visualizar.py            # Visualização de clusters com TSNE
+├── app.py                       # Inicialização do servidor Flask
+├── main.py                      # Arquivo principal para execução do pipeline
+├── requirements.txt             # Dependências do projeto
+├── .env                         # Variáveis de ambiente (chaves de API)
+├── report/                      # Relatórios gerados (HTML, gráficos)
+├── data/                        # Dados intermediários (CSV)
+└── outputs/                     # Resultados das análises (CSV)
 ```
 
 ---
@@ -90,6 +94,31 @@ As APIs da OpenAI e HubSpot utilizam tokens privados. As chaves devem estar no a
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 HUBSPOT_TOKEN=pat-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
+
+---
+
+## Como Executar o Projeto
+
+1. **Instalar Dependências**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Configurar Variáveis de Ambiente**:
+   - Adicione as chaves de API no arquivo `.env`.
+
+3. **Executar o Pipeline**:
+   ```bash
+   python main.py
+   ```
+
+4. **Iniciar o Servidor Flask**:
+   ```bash
+   python app.py
+   ```
+
+5. **Acessar o Dashboard**:
+   - Abra o navegador e acesse `http://127.0.0.1:5000`.
 
 ---
 
@@ -118,17 +147,17 @@ HUBSPOT_TOKEN=pat-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 
 ## Status do Projeto
 
-✅ MVP funcional finalizado
-✅ Dados reais extraídos via API do HubSpot
-✅ Pipeline completo testado localmente
-✅ Repositório público com documentação
+✅ MVP funcional finalizado  
+✅ Dados reais extraídos via API do HubSpot  
+✅ Pipeline completo testado localmente  
+✅ Repositório público com documentação  
 
 ---
 
 ## Autor
 
-**Erikson Rodrigues**
-[LinkedIn](https://www.linkedin.com/in/eriksonrds) • [GitHub](https://github.com/eriksonrds)
+**Erikson Rodrigues**  
+[LinkedIn](https://www.linkedin.com/in/eriksonrds) • [GitHub](https://github.com/eriksonrds)  
 Especialista em IA aplicada à inovação comercial, com experiência em integrações cloud, automações e soluções corporativas.
 
 ---

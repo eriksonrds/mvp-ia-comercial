@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Córtex - Insights</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo-area">
+        <img src="{{ url_for('static', filename='logo_ai_cortex.png') }}" alt="AI Córtex" class="logo" />
+        <span class="title">AI-CÓRTEX</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a class="menu-item" href="/"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+          <li class="active"><a class="menu-item" href="/insights"><i class="fas fa-lightbulb"></i><span>Insights</span></a></li>
+          <li><a class="menu-item" href="#"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="header">
+        <div class="header-left">
+          <img src="{{ url_for('static', filename='logo_logcomex.png') }}" alt="Logcomex" class="logo large-logo" />
+          <span>Hub de Inteligência Comercial - RevOps</span>
+        </div>
+        <div class="header-right">
+          <span>Olá, Erikson Rodrigues dos Santos!</span>
+          <img src="{{ url_for('static', filename='avatar.png') }}" alt="Avatar" class="avatar" />
+        </div>
+      </div>
+
+      <div class="cards" id="insights-container">
+        <div class="card">
+          <p>Carregando insights...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    fetch("/dados")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("insights-container");
+        container.innerHTML = "";
+
+        const categorias = {
+          sucesso: [],
+          perda: [],
+          outros: [],
+        };
+
+        (data.insights.kmeans || []).forEach(item => {
+          const tipo = (item.tipo_cluster || "outros").toLowerCase();
+          const tema = item.tema_detectado || `Cluster ${item.cluster}`;
+          item._tema_exibicao = tema;
+
+          if (tipo === "sucesso") {
+            categorias.sucesso.push(item);
+          } else if (tipo === "perda") {
+            categorias.perda.push(item);
+          } else {
+            categorias.outros.push(item);
+          }
+        });
+
+        function renderSecao(titulo, icone, cor, lista, classe) {
+          if (lista.length === 0) return;
+
+          const blocoSecao = document.createElement("div");
+          blocoSecao.classList.add("card", classe); // aplica classe CSS específica
+
+          const cabecalho = `
+            <h3 style="color: ${cor}; margin-bottom: 20px;">
+              <i class="fas ${icone}" style="margin-right: 8px;"></i>${titulo}
+            </h3>
+          `;
+          blocoSecao.innerHTML = cabecalho;
+
+          lista.forEach(item => {
+            const motivo = item.motivo_real || "-";
+            const insight = item.insight_estrategico || "-";
+            const exemplos = Array.isArray(item.exemplos_representativos) ? item.exemplos_representativos : [];
+
+            const exemplosHTML = exemplos
+              .map(e => `<p style="margin-left: 12px;">${e.replace(/^•\s*/, "• ")}</p>`)
+              .join("");
+
+            const bloco = document.createElement("div");
+            bloco.classList.add("insight-bloco");
+            bloco.innerHTML = `
+              <h4>${item._tema_exibicao}</h4>
+              <p><strong>Motivo Real:</strong> ${motivo}</p>
+              <p><strong>Insight Estratégico:</strong> ${insight}</p>
+              <p><strong>Exemplos:</strong></p>
+              ${exemplosHTML}
+            `;
+            blocoSecao.appendChild(bloco);
+          });
+
+          container.appendChild(blocoSecao);
+        }
+
+        renderSecao("Sucesso Comercial", "fa-check-circle", "#2e7d32", categorias.sucesso, "sucesso");
+        renderSecao("Motivos de Perda", "fa-times-circle", "#c62828", categorias.perda, "perda");
+        renderSecao("Padrões Ambíguos ou Outros", "fa-question-circle", "#6a1b9a", categorias.outros, "outros");
+      });
+  </script>
+</body>
+</html>

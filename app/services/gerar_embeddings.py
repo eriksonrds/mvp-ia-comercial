@@ -15,17 +15,12 @@ api_key = os.getenv("OPENAI_API_KEY")
 # Cria cliente ignorando SSL (ambiente local/teste)
 client = OpenAI(api_key=api_key, http_client=httpx.Client(verify=False))
 
-
 def gerar_embeddings_csv(
     input_path=DATA_DIR / "interacoes_hubspot.csv",
     output_path=DATA_DIR / "interacoes_com_embeddings.csv",
 ) -> None:
     """
-    Gera embeddings com base no contexto de interações comerciais e salva em CSV.
-
-    Args:
-        input_path (Path): Caminho para o CSV de entrada com as interações brutas.
-        output_path (Path): Caminho onde será salvo o CSV com os embeddings.
+    Gera embeddings com base nos dados estruturados do HubSpot e salva em CSV.
     """
     df = pd.read_csv(input_path)
     embeddings = []
@@ -35,14 +30,14 @@ def gerar_embeddings_csv(
     for i, row in df.iterrows():
         contexto = f"""
         Empresa: {row.get('empresa', '')}
-        Descrição: {row.get('frase_interacao', '')}
         Status do negócio: {row.get('status', '')}
         Pipeline: {row.get('pipeline', '')}
+        Motivo de sucesso: {row.get('motivo_sucesso', '')}
+        Motivo de perda: {row.get('motivo_perda', '')}
         Data de criação: {row.get('data_criacao', '')}
         Data de fechamento: {row.get('data_fechamento', '')}
         Última interação: {row.get('ultima_interacao', '')}
-        Responsável interno: {row.get('responsavel', '')}
-        Canal de origem: {row.get('canal', '')}
+        Responsável: {row.get('responsavel', '')}
         """
 
         sucesso = False
@@ -63,9 +58,7 @@ def gerar_embeddings_csv(
 
         if not sucesso:
             embedding = [0.0] * 1536
-            print(
-                f"❌ Falha definitiva ao gerar embedding para linha {i} — usando vetor nulo."
-            )
+            print(f"❌ Falha definitiva ao gerar embedding para linha {i} — usando vetor nulo.")
 
         embeddings.append(embedding)
 
@@ -77,7 +70,6 @@ def gerar_embeddings_csv(
     df_emb.to_csv(output_path, index=False)
 
     print(f"\n✅ Embeddings com contexto salvos em: {output_path}")
-
 
 if __name__ == "__main__":
     gerar_embeddings_csv()

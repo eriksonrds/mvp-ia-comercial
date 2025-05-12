@@ -1,6 +1,6 @@
 import pandas as pd
 from app.utils.visualizar import visualizar_tsne
-from app.pipeline.interpretar_clusters import gerar_resumo_cluster
+from app.postprocessing.interpretar_clusters import gerar_resumo_cluster
 from app.config.paths import DATA_DIR
 
 def preparar_dados_para_dashboard():
