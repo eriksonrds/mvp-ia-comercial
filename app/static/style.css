@@ -13,7 +13,7 @@ body {
 
 /* === SIDEBAR === */
 .sidebar {
-  width: 180px;
+  width: 220px;
   background: linear-gradient(to right, #2c004d, #4b0082);
   color: white;
   padding: 20px;
@@ -48,7 +48,7 @@ body {
 
 .sidebar li {
   padding: 10px 0;
-  font-size: 14px;
+  font-size: 20px;
 }
 
 .sidebar li a {
@@ -83,12 +83,27 @@ body {
 }
 
 /* === HEADER (TOPBAR) === */
+
+@font-face {
+  font-family: 'Astera';
+  src: url('/static/fonts/ASTERA-v2.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+.title {
+  font-family: 'Astera', sans-serif;
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: white;
+}
+
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: linear-gradient(to right, #4b0082, #9c59d1);
-  padding: 16px 40px;
+  padding: 16px 10px;
   color: white;
 }
 
@@ -113,13 +128,13 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
+  font-size: 16px;
   white-space: nowrap;
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid white;
